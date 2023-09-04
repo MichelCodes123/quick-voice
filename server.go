@@ -12,6 +12,7 @@ func main() {
 	http.Handle("/", fs)
 
 	//Sets up port for listening
-	fmt.Println("Server Started")
+	fmt.Println("Server Starteds")
+
 	log.Fatal(http.ListenAndServe("127.0.0.1:3000", nil))
 }
