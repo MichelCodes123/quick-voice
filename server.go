@@ -9,9 +9,9 @@ import (
 func main() {
 	//Registering route handlers
 	fs := http.FileServer(http.Dir("static/"))
-	http.Handle("/",fs)
+	http.Handle("/", fs)
 
 	//Sets up port for listening
 	fmt.Println("Server Started")
-	log.Fatal(http.ListenAndServe("localhost:3000", nil))
+	log.Fatal(http.ListenAndServe("127.0.0.1:3000", nil))
 }
