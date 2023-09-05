@@ -7,7 +7,8 @@ import (
 	"net/http"
 )
 
-var templates = template.Must(template.ParseFiles("templates/index.html", "templates/analytics.html"))
+//var templates = template.Must(template.ParseFiles("templates/index.html", "templates/analytics.html"))
+var templates = template.Must(template.ParseGlob("templates/*.html"))
 
 func renderTemplate(w http.ResponseWriter, dir string, data any) {
 	err := templates.ExecuteTemplate(w, dir, nil)
