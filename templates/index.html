@@ -11,14 +11,52 @@
 
 <body>
     <nav>
-        <h1 class = "main-title"> Quick-Voice</h1>
-        <ul class = "nav-links-wrap">
-            <li> <a class = "nav-links" href="">Home</a></li>
-            <li> <a class = "nav-links" href="">Invoice Summary</a></li>
-            <li> <a class = "nav-links" href="">Analytics</a></li>
+        <h1 class="main-title"> Quick-Voice</h1>
+        <ul class="nav-links-wrap">
+            <li> <a class="nav-links" href="">Home</a></li>
+            <li> <a class="nav-links" href="">Invoice Summary</a></li>
+            <li> <a class="nav-links" href="">Analytics</a></li>
         </ul>
     </nav>
-    <main class = "main-wrapper">
+    <main class="main-wrapper">
+
+        <h2>
+            Invoice
+        </h2>
+        <fieldset id="general-info">
+            <label for="general-invoice-num">
+                <input id="general-invoice-num" class="field" type="text" placeholder="Invoice #">
+            </label>
+            <label for="general-date">
+                <input id="receive-addr" class="field" type="date" placeholder="Date of Invoice">
+            </label>
+          
+        </fieldset>
+
+        <h2>Billed To:</h2>
+        <fieldset id="receiver-info">
+            <label for="receive-name">
+                <input id="receive-name" class="field" type="text" placeholder="Receiver Name">
+            </label>
+            <label for="receive-addr">
+                <input id="receive-addr" class="field" type="text" placeholder="Receiver Address">
+            </label>
+            <label for="receive-num">
+                <input id="receive-num" class="field" type="text" placeholder="Receiver Phone">
+            </label>
+        </fieldset>
+
+        <h2>Item Summary:</h2>
+        <table>
+            <tr>
+                <th>Item Description</th>
+                <th>Quantity</th>
+                <th>Cost/Unit</th>
+                <th> Total</th>
+            </tr>
+        </table>
+
+
 
     </main>
 
