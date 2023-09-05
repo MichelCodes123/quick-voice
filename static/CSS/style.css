@@ -58,3 +58,22 @@ fieldset{
     display: flex;
     flex-direction: column;
 }
+#summary-table{
+    width: 80%;
+}
+#summary-add{
+    width: 2rem;
+}
+#invoice{
+    display: flex;
+    margin-top: 2rem;
+    gap: 3rem;
+    flex-direction: column;
+}
+
+input[type=text]{
+    background-color: rgb(243, 243, 243);
+    width: 10rem;
+    height: 2rem;
+    border: none;
+}

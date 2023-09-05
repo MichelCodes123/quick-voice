@@ -19,42 +19,66 @@
         </ul>
     </nav>
     <main class="main-wrapper">
+         <form id="invoice">
+        <section>
+            <h2> Invoice</h2>
+   
+                <fieldset id="general-info">
+                    <label for="general-invoice-num">
+                        <input id="general-invoice-num" class="field" type="text" placeholder="Invoice #">
+                    </label>
+                    <label for="general-date">
+                        <input id="receive-addr" class="field" type="date" placeholder="Date of Invoice">
+                    </label>
 
-        <h2>
-            Invoice
-        </h2>
-        <fieldset id="general-info">
-            <label for="general-invoice-num">
-                <input id="general-invoice-num" class="field" type="text" placeholder="Invoice #">
-            </label>
-            <label for="general-date">
-                <input id="receive-addr" class="field" type="date" placeholder="Date of Invoice">
-            </label>
-          
-        </fieldset>
+                </fieldset>
 
-        <h2>Billed To:</h2>
-        <fieldset id="receiver-info">
-            <label for="receive-name">
-                <input id="receive-name" class="field" type="text" placeholder="Receiver Name">
-            </label>
-            <label for="receive-addr">
-                <input id="receive-addr" class="field" type="text" placeholder="Receiver Address">
-            </label>
-            <label for="receive-num">
-                <input id="receive-num" class="field" type="text" placeholder="Receiver Phone">
-            </label>
-        </fieldset>
 
-        <h2>Item Summary:</h2>
-        <table>
-            <tr>
-                <th>Item Description</th>
-                <th>Quantity</th>
-                <th>Cost/Unit</th>
-                <th> Total</th>
-            </tr>
-        </table>
+        </section>
+
+        <section>
+            <h2>Billed To:</h2>
+            <fieldset id="receiver-info">
+                <label for="receive-name">
+                    <input id="receive-name" class="field" type="text" placeholder="Receiver Name">
+                </label>
+                <label for="receive-addr">
+                    <input id="receive-addr" class="field" type="text" placeholder="Receiver Address">
+                </label>
+                <label for="receive-num">
+                    <input id="receive-num" class="field" type="text" placeholder="Receiver Phone">
+                </label>
+            </fieldset>
+        </section>
+
+
+        <section>
+            <h2>Item Summary:</h2>
+            <table id="summary-table">
+                <tr>
+                    <th>Item Description</th>
+                    <th>Quantity</th>
+                    <th>Cost/Unit</th>
+                    <th>Total</th>
+                </tr>
+                <tr class="summary-data">
+                    <td> <input class="summary-data-item" class="field" type="text" placeholder="Desc">
+                    </td>
+                    <td> <input class="summary-data-item" class="field" type="text" placeholder="Qty">
+                    </td>
+                    <td> <input class="summary-data-item" class="field" type="text" placeholder="Cost/unit">
+                    </td>
+                    <td> <input class="summary-data-item" class="field" type="text" placeholder="Total">
+                    </td>
+                </tr>
+            </table>
+            <input id = "summary-add" type="button"> 
+        </section>
+
+        <!-- Include field to change the colour of the background -->
+
+        </form>
+
 
 
 
