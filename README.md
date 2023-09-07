@@ -10,9 +10,9 @@ I started learning how to use and implement databases, and am looking for a proj
 1. Install Go
 > https://go.dev/dl/
 
-2. Install PostgresSQL and setup local database
+2. Install PostgresSQL and setup a local database
 > https://www.postgresql.org/download/
 
 3. Clone this repository.
 
-4. run `go run .`
+4. In the project directory, run `go run .` from the terminal
