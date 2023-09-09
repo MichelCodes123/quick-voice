@@ -26,6 +26,17 @@ function changeHandler(e) {
     let qty = row.querySelector(".qty").value;
     let cpu = row.querySelector(".cpu").value;
 
-    row.querySelector(".total").value = qty*cpu;
+    row.querySelector(".total").value = qty * cpu;
+
+}
+
+document.addEventListener("DOMContentLoaded", loadHandler)
+
+function loadHandler() {
+
+    fetch("\presets")
+        .then(response => {
+
+        });
 
 }
