@@ -1,6 +1,7 @@
 # quick-voice
 Sleek and powerful invoicing application that lets users create and store business invoices. 
 
+**Current UI**
 ![Alt text](image.png)
 
 ## Motivations
