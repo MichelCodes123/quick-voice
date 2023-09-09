@@ -5,8 +5,7 @@ Sleek and powerful invoicing application that lets users create and store busine
 ![Alt text](image.png)
 
 ## Motivations
-I started learning how to use and implement databases, and am looking for a project to put my skills to the test. The app is built with Go, and uses PostgreSQL for data storage.
-
+I had been looking to learn SQL and how to use a DBMS, so I thought a project would be the best place to start.
 
 ## How to run the project.
 1. Install Go
