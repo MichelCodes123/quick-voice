@@ -1,29 +1,31 @@
 
 const newItem = document.getElementById("summary-add")
 const itemTable = document.getElementById("summary-table-body")
+const data = document.querySelector(".summary-data").cloneNode(true)
+
+document.querySelectorAll(".summary-calc").forEach(x => {
+    x.addEventListener("change", changeHandler);
+})
 
 newItem.addEventListener("click", clickHandler)
 
 function clickHandler(e) {
 
-    const newRow = document.createElement("tr")
-    newRow.classList.add("summary-data")
+    e.preventDefault()
+    const newRow = data.cloneNode(true);
 
-    const itemcol = document.createElement("input")
-    const qtycol = document.createElement("input")
-    const costcol = document.createElement("input")
-    const totalcol = document.createElement("input")
-
-
-    const nodes = [itemcol, qtycol, costcol, totalcol]
-    nodes.forEach(x => {
-        const tabledata = document.createElement("td")
-        tabledata.append(x)
-        newRow.append(tabledata)
-        x.classList.add("summary-table-item")
-        x.type = "text"
+    newRow.querySelectorAll(".summary-calc").forEach(x => {
+        x.addEventListener("change", changeHandler);
     })
-
     itemTable.append(newRow)
+
+}
+
+function changeHandler(e) {
+    const row = e.target.parentNode.parentNode
+    let qty = row.querySelector(".qty").value;
+    let cpu = row.querySelector(".cpu").value;
+
+    row.querySelector(".total").value = qty*cpu;
 
 }
