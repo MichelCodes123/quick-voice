@@ -31,26 +31,67 @@
     </nav>
     <main class="main-wrapper">
         <form id="invoice">
-            <section>
-                <h2> Invoice</h2>
+            <section id="id-sect">
 
-                <fieldset id="general-info">
-                    <label for="general-invoice-num">
-                        <input id="general-invoice-num general" class="field special-input" type="text"
-                            placeholder="Invoice #">
-                    </label>
-                    <label for="general-date">
-                        <input id="receive-addr" class="field" type="date" placeholder="Date of Invoice">
-                    </label>
 
-                </fieldset>
+                <div class = "no-preset">
+                    <!--Dropdown button taken from https://www.w3schools.com/css/css_dropdowns.asp -->
+                    <div class="dropdown">
+                        <button class="dropbtn">Presets</button>
+                        <div class="dropdown-content">
+                            <a href="#">Preset 1</a>
+                            <a href="#">Preset 2</a>
+                            <a href="#">Preset 3</a>
+                            <a href="#">Preset 4</a>
+                            <a href="#">Preset 5</a>
+                        </div>
+                    </div>
+
+                    <fieldset class="main-id">
+                        <label for="send-name">
+                            <input class="send-name field special-input" type="text" placeholder="Sender Name">
+                        </label>
+                        <label for="send-addr">
+                            <input class="send-addr field special-input" type="text" placeholder="Sender Address">
+                        </label>
+                        <label for="send-num">
+                            <input class=" send-num field special-input" type="text" placeholder="Receiver Phone">
+                        </label>
+                        <label for="send-mail">
+                            <input class="send-mail field special-input" type="email" placeholder="Sender Email">
+                        </label>
+                        <label for="send-bill">
+                            <textarea class="send-bill field special-input" rows="3" placeholder="Billing Info"
+                                wrap="soft"></textarea>
+                        </label>
+
+                    </fieldset>
+                </div>
+
+                <div class = "preset-ready">
+
+                </div>
+
+                <div>
+                    <h2> Invoice</h2>
+                    <fieldset id="general-info">
+                        <label for="general-invoice-num">
+                            <input id="general-invoice-num general" class="field special-input" type="text"
+                                placeholder="Invoice #">
+                        </label>
+                        <label for="general-date">
+                            <input id="receive-addr" class="field" type="date" placeholder="Date of Invoice">
+                        </label>
+
+                    </fieldset>
+                </div>
 
 
             </section>
 
             <section>
                 <h2>Billed To:</h2>
-                <fieldset id="receiver-info">
+                <fieldset class="main-id">
                     <label for="receive-name">
                         <input id="receive-name special-input" class="field special-input" type="text"
                             placeholder="Receiver Name">
@@ -86,11 +127,14 @@
                         <tr class="summary-data">
                             <td> <input class="summary-desc" class="field" type="text" name="desc">
                             </td>
-                            <td> <input class="summary-data-item summary-calc qty" class="field" type="number" name = "qty" value="0">
+                            <td> <input class="summary-data-item summary-calc qty" class="field" type="number"
+                                    name="qty" value="0">
                             </td>
-                            <td> <input class="summary-data-item summary-calc cpu" class="field" type="number" name = "cpu" value="0">
+                            <td> <input class="summary-data-item summary-calc cpu" class="field" type="number"
+                                    name="cpu" value="0">
                             </td>
-                            <td> <input class="summary-data-item total" class="field" type="number" name = "total" value="0" disabled>
+                            <td> <input class="summary-data-item total" class="field" type="number" name="total"
+                                    value="0" disabled>
                             </td>
                         </tr>
 

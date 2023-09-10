@@ -2,6 +2,10 @@
 const newItem = document.getElementById("summary-add")
 const itemTable = document.getElementById("summary-table-body")
 const data = document.querySelector(".summary-data").cloneNode(true)
+const preset = document.querySelector(".dropbtn")
+preset.addEventListener("click", (e) => {
+    e.preventDefault()
+})
 
 document.querySelectorAll(".summary-calc").forEach(x => {
     x.addEventListener("change", changeHandler);
