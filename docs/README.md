@@ -4,7 +4,6 @@ Sleek and powerful invoicing application that lets users create and store busine
 **Current UI**
 ![Alt text](image.png)
 
-
 ## Core Features
 Quick voice supports the following :
 - Support for up to 5 different businesses/ sender profiles

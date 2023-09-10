@@ -7,7 +7,7 @@
 }
 body{
     width: 100vw;
-    height: 100vh;
+    
 }
 nav{
     height: 70px;
@@ -39,6 +39,7 @@ fieldset{
     max-width: 1000px;
     height: 100%;
     padding: 0 4rem;
+    margin-bottom: 20rem;
 }
 .main-title{
     margin-left: 4rem;
