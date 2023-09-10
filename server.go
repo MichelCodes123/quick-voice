@@ -30,6 +30,7 @@ type sdr struct {
 	Id      string `json:"id"`
 	Address string `json:"address"`
 	Number  string `json:"number"`
+	Email string 	`json:"email"`
 	Name    string `json:"name"`
 }
 
@@ -56,7 +57,7 @@ func initt(w http.ResponseWriter) {
 	a := make([]sdr, 0)
 
 	for rows.Next() {
-		read_err := rows.Scan(&data.Id, &data.Address, &data.Number, &data.Name)
+		read_err := rows.Scan(&data.Id, &data.Address, &data.Number, &data.Email, &data.Name)
 		//Error handling for issue with database reads
 		if read_err != nil {
 			http.Error(w, "Something went wrong", http.StatusInternalServerError)
