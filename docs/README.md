@@ -4,6 +4,16 @@ Sleek and powerful invoicing application that lets users create and store busine
 **Current UI**
 ![Alt text](image.png)
 
+
+## Core Features
+Quick voice supports the following :
+- Support for up to 5 different businesses/ sender profiles
+- Invoice summary per preset
+- Useful data analytics such as..
+    - Average invoice total 
+    - Average number of items invoiced
+    - Monlthy and Yearly income trends
+
 ## Motivations
 I had been looking to learn SQL and how to use a DBMS, so I thought a project would be the best place to start.
 

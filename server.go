@@ -2,14 +2,18 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
+
+
 
 // var templates = template.Must(template.ParseFiles("templates/index.html", "templates/analytics.html"))
 var templates = template.Must(template.ParseGlob("templates/*.html"))
@@ -22,32 +26,61 @@ func renderTemplate(w http.ResponseWriter, dir string, data any) {
 		return
 	}
 }
+type sdr struct {
+	Id      string `json:"id"`
+	Address string `json:"address"`
+	Number  string `json:"number"`
+	Name    string `json:"name"`
+}
 
-func initt() string {
-	err:= godotenv.Load()
-	if (err != nil){
+func initt(w http.ResponseWriter) {
+	err := godotenv.Load()
+	if err != nil {
 		log.Fatal("Error loading file")
 	}
 
-	str := os.Getenv("PASS")
-	dbname := os.Getenv("DBNAME")
-	user := os.Getenv("USER")
-    port := os.Getenv("PORT")
-	host := os.Getenv("HOST")
-
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, str, dbname)
+	connStr := os.Getenv("DATABASE_URL")
 	db, err := sql.Open("postgres", connStr)
 
-	_, e := db.Exec("INSERT into sender VALUES (3, '18 driveOn Road','647-890-1232', 'Joe Smith')")
-
-	db.Close()
 	if err != nil {
-		log.Fatal(err)
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 	}
+
+	defer db.Close()
+	rows, e := db.Query(`SELECT * FROM sender`)
 	if e != nil {
-		return "something went wrong"
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 	}
-	return ""
+
+	var data sdr
+	a := make([]sdr, 0)
+
+	for rows.Next() {
+		read_err := rows.Scan(&data.Id, &data.Address, &data.Number, &data.Name)
+		//Error handling for issue with database reads
+		if read_err != nil {
+			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		}
+
+		defer rows.Close()
+		a = append(a, data)
+
+	}
+
+	str, re := json.Marshal(a)
+	if re != nil {
+		fmt.Print(re)
+	}
+
+	//Setup response
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_, writerr := w.Write(str)
+
+	//Error handling for issues with writing the response
+	if writerr != nil {
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+	}
 }
 
 func main() {
@@ -70,8 +103,9 @@ func main() {
 		renderTemplate(w, "analytics.html", nil)
 	})
 
+	//make sure this route only accepts get requests
 	http.HandleFunc("/presets", func(w http.ResponseWriter, r *http.Request) {
-		initt()
+		initt(w)
 	})
 
 	//Sets up port for listening

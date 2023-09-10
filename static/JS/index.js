@@ -36,7 +36,12 @@ function loadHandler() {
 
     fetch("\presets")
         .then(response => {
+            console.log(...response.headers)
+            return response.json()
+        })
+        .then(x => {
+            console.log(x)
 
-        });
+        })
 
 }
