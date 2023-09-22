@@ -32,8 +32,6 @@
     <main class="main-wrapper">
         <form id="invoice">
             <section id="id-sect">
-
-
                 <div class="id-presets">
                     <label for="id-presets-list">
 
@@ -47,7 +45,6 @@
                     </label>
 
                     <div class="no-preset hide-preset">
-
                         <fieldset class="main-id">
                             <label for="send-name">
                                 <input class="send-name field special-input" type="text" placeholder="Sender Name">
@@ -86,7 +83,7 @@
                                 placeholder="Invoice #">
                         </label>
                         <label for="general-date">
-                            <input id="receive-addr" class="field" type="date" placeholder="Date of Invoice">
+                            <input class="special-input" id="receive-addr" class="field" type="date" placeholder="Date of Invoice">
                         </label>
 
                     </fieldset>
@@ -100,13 +97,14 @@
                 <fieldset class="main-id">
                     <label for="receive-name">
                         <input id="receive-name special-input" class="field special-input" type="text"
-                            placeholder="Receiver Name">
+                            placeholder="Receiver Name" required>
                     </label>
                     <label for="receive-addr">
-                        <input id="receive-addr" class="field special-input" type="text" placeholder="Receiver Address">
+                        <input id="receive-addr" class="field special-input" type="text" placeholder="Receiver Address"
+                            required>
                     </label>
                     <label for="receive-num">
-                        <input id="receive-num receive" class="field special-input" type="text"
+                        <input id="receive-num receive" class="field special-input" type="tel" required
                             placeholder="Receiver Phone">
                     </label>
                 </fieldset>
@@ -114,7 +112,13 @@
 
 
             <section>
-                <h2>Item Summary:</h2>
+
+
+                <h2 class="section-title">Item Summary:</h2>
+
+                <label for="summary-currency">
+                    <input class="field special-input" type="text" placeholder="Input Currency" name="tax">
+                </label>
                 <table id="summary-table">
 
                     <colgroup>
@@ -131,16 +135,16 @@
                             <th>Total</th>
                         </tr>
                         <tr class="summary-data">
-                            <td> <input class="summary-desc" class="field" type="text" name="desc">
+                            <td> <input class="summary-desc" class="field" type="text" name="desc" required>
                             </td>
                             <td> <input class="summary-data-item summary-calc qty" class="field" type="number"
-                                    name="qty" value="0">
+                                    name="qty" value="0" required>
                             </td>
                             <td> <input class="summary-data-item summary-calc cpu" class="field" type="number"
-                                    name="cpu" value="0">
+                                    name="cpu" value="0.00" readonly required>
                             </td>
                             <td> <input class="summary-data-item total" class="field" type="number" name="total"
-                                    value="0" disabled>
+                                    value="0.00" disabled>
                             </td>
                         </tr>
 
@@ -148,14 +152,39 @@
 
                 </table>
 
-                <button id="summary-add">
-                    Add Item
-                </button>
+                <div class="g">
+                    <button id="summary-add">
+                        Add Item
+                    </button>
 
+                    <div id="summary-extra">
+                        <label for="">
+                            Subtotal:
+                            <input id="summary-sub" class="special-input" disabled type="number" value="0.00">
+                        </label>
+                        <label for="">
+                            Tax:
+                            <input id="summary-tax" class="special-input" type="number" value="0.00" step="any">
+                        </label>
+                        <label for="">
+                            Shipping:
+                            <input id=summary-ship class="special-input" type="number" value="0.00" name="tax">
+                        </label>
+                        <h3 id="summary-total">Total: 0.00</h3>
+
+                    </div>
+
+                </div>
 
             </section>
 
+            <textarea id="extra-notes"placeholder="Additional Information"></textarea>
+
             <!-- Include field to change the colour of the background -->
+
+            <button id="invoice-submit">
+                Save and Print
+            </button>
 
         </form>
 
