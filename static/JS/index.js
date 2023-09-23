@@ -7,7 +7,7 @@ const presetSection = document.querySelector(".id-presets")
 let subtotal = document.getElementById("summary-sub")
 let tax = document.getElementById("summary-tax")
 let ship = document.getElementById("summary-ship")
-let total= document.getElementById("summary-total")
+let total = document.getElementById("summary-total")
 
 
 
@@ -15,12 +15,20 @@ const presetSelect = document.getElementById("id-presets-list")
 presetSelect.addEventListener("change", selectHandler)
 function selectHandler(e) {
 
+    //Go through presets to find which one is actively showing
     presetSection.querySelectorAll(".preset").forEach(x => {
         if (!x.classList.contains("hide-preset")) {
             x.classList.toggle("hide-preset")
+
+            x.querySelectorAll(".field").forEach(x => {
+                x.toggleAttribute("disabled")
+            })
         }
     })
     document.querySelector(`.p${e.target.value}`).classList.toggle("hide-preset")
+    document.querySelector(`.p${e.target.value}`).querySelectorAll(".field").forEach(x => {
+        x.toggleAttribute("disabled")
+    })
 }
 
 document.querySelectorAll(".summary-calc").forEach(x => {
@@ -53,9 +61,9 @@ function changeHandler(e) {
 }
 
 tax.addEventListener("change", summaryHandler);
-ship.addEventListener("change",summaryHandler); 
+ship.addEventListener("change", summaryHandler);
 
-function summaryHandler(){
+function summaryHandler() {
 
     let sub = 0;
     document.querySelectorAll(".total").forEach(x => {
@@ -63,7 +71,7 @@ function summaryHandler(){
 
     })
     subtotal.value = sub.toFixed(2)
-    total.innerText = `Total: ${parseFloat(sub + parseFloat(sub*tax.value) + parseFloat(ship.value)).toFixed(2)}`
+    total.innerText = `Total: ${parseFloat(sub + parseFloat(sub * tax.value) + parseFloat(ship.value)).toFixed(2)}`
 }
 
 document.addEventListener("DOMContentLoaded", loadHandler)
@@ -102,6 +110,9 @@ function loadHandler() {
             console.log(x)
 
             document.querySelector(".p1").classList.toggle("hide-preset")
+            document.querySelector(".p1").querySelectorAll(".field").forEach(x => {
+                x.toggleAttribute("disabled")
+            })
 
         })
 

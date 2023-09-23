@@ -30,7 +30,7 @@
         </ul>
     </nav>
     <main class="main-wrapper">
-        <form id="invoice">
+        <form id="invoice" method="POST" action="/generate" enctype="application/x-www-form-urlencoded">
             <section id="id-sect">
                 <div class="id-presets">
                     <label for="id-presets-list">
@@ -47,16 +47,16 @@
                     <div class="no-preset hide-preset">
                         <fieldset class="main-id">
                             <label for="send-name">
-                                <input class="send-name field special-input" type="text" placeholder="Sender Name" required>
+                                <input class="send-name field special-input" name="sender_name" type="text" placeholder="Sender Name" required disabled>
                             </label>
                             <label for="send-addr">
-                                <input class="send-addr field special-input" type="text" placeholder="Sender Address" required>
+                                <input class="send-addr field special-input" name="sender_address" type="text" placeholder="Sender Address" required disabled>
                             </label>
                             <label for="send-num">
-                                <input class=" send-num field special-input" type="text" placeholder="Receiver Phone" required>
+                                <input class=" send-num field special-input" name = "sender_number" type="text" placeholder="Receiver Phone" required disabled>
                             </label>
                             <label for="send-mail">
-                                <input class="send-mail field special-input" type="email" placeholder="Sender Email" required>
+                                <input class="send-mail field special-input" name = "sender_email" type="email" placeholder="Sender Email" required disabled>
                             </label>
                             <!-- <label for="send-bill">
                                 <textarea class="send-bill field special-input" rows="3" placeholder="Billing Info"
@@ -96,15 +96,15 @@
                 <h2>Billed To:</h2>
                 <fieldset class="main-id">
                     <label for="receive-name">
-                        <input id="receive-name special-input" class="field special-input" type="text"
+                        <input id="receive-name special-input" name="receiver_Name" class="field special-input" type="text"
                             placeholder="Receiver Name" required>
                     </label>
                     <label for="receive-addr">
-                        <input id="receive-addr" class="field special-input" type="text" placeholder="Receiver Address"
+                        <input id="receive-addr" name="receiver_address" class="field special-input" type="text" placeholder="Receiver Address"
                             required>
                     </label>
                     <label for="receive-num">
-                        <input id="receive-num receive" class="field special-input" type="tel" required
+                        <input id="receive-num receive" name="receiver_number" class="field special-input" type="tel" required
                             placeholder="Receiver Phone">
                     </label>
                 </fieldset>
@@ -141,7 +141,7 @@
                                     name="qty" value="0" required>
                             </td>
                             <td> <input class="summary-data-item summary-calc cpu" class="field" type="number"
-                                    name="cpu" value="0.00" readonly required>
+                                    name="cpu" value="0.00" required step="any">
                             </td>
                             <td> <input class="summary-data-item total" class="field" type="number" name="total"
                                     value="0.00" disabled>
@@ -164,11 +164,11 @@
                         </label>
                         <label for="">
                             Tax:
-                            <input id="summary-tax" class="special-input" type="number" value="0.00" step="any">
+                            <input id="summary-tax" class="special-input" type="number" value="0.00" step="any" name="tax">
                         </label>
                         <label for="">
                             Shipping:
-                            <input id=summary-ship class="special-input" type="number" value="0.00" name="tax">
+                            <input id=summary-ship class="special-input" type="number" value="0.00" name="shipping">
                         </label>
                         <h3 id="summary-total">Total: 0.00</h3>
 
@@ -178,7 +178,7 @@
 
             </section>
 
-            <textarea id="extra-notes"placeholder="Additional Information"></textarea>
+            <textarea id="extra-notes" name = "extra_notes" placeholder="Additional Information"></textarea>
 
             <!-- Include field to change the colour of the background -->
 

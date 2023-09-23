@@ -109,6 +109,32 @@ func main() {
 		initt(w)
 	})
 
+	type receiver struct{
+
+	}
+
+	type invoice struct{
+
+	}
+	http.HandleFunc("/generate", func(w http.ResponseWriter, r *http.Request) {
+
+
+		r.ParseForm()
+
+		for key,value := range r.Form{
+			fmt.Printf("%s = %s\n", key,value)
+		}
+	
+
+		switch r.Method{
+		case "POST":
+				renderTemplate(w, "printout.html", nil)
+		default:
+			http.Error(w, "404 not found", http.StatusInternalServerError)
+		}
+	
+	})
+
 	//Sets up port for listening
 	fmt.Println("Server Started")
 	log.Fatal(http.ListenAndServe("127.0.0.1:3000", nil))
