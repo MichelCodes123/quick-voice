@@ -7,13 +7,14 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"reflect"
+	_ "strings"
+
 	"os"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
-
-
 
 // var templates = template.Must(template.ParseFiles("templates/index.html", "templates/analytics.html"))
 var templates = template.Must(template.ParseGlob("templates/*.html"))
@@ -26,11 +27,12 @@ func renderTemplate(w http.ResponseWriter, dir string, data any) {
 		return
 	}
 }
+
 type sdr struct {
 	Id      string `json:"id"`
 	Address string `json:"address"`
 	Number  string `json:"number"`
-	Email string 	`json:"email"`
+	Email   string `json:"email"`
 	Name    string `json:"name"`
 }
 
@@ -54,6 +56,7 @@ func initt(w http.ResponseWriter) {
 	}
 
 	var data sdr
+	//Create a "slice" with the make function, to form a growable array of sender structs
 	a := make([]sdr, 0)
 
 	for rows.Next() {
@@ -109,30 +112,90 @@ func main() {
 		initt(w)
 	})
 
-	type receiver struct{
 
+	//Struct definitions to match the database
+	type sender struct {
+		receipient_name string
+		address         string
+		phone           string
+		email 			string
+		sender_id       int
+	}
+	type receipient struct {
+		receipient_name string
+		address         string
+		phone           string
+		sender_id       int
 	}
 
-	type invoice struct{
-
+	type invoice struct {
+		invoice_date string
+		subtotal     float32
+		tax          float32
+		shipping     float32
+		invoice_num  string
+		sender_id    int
 	}
+	type items struct {
+		invoice_num string
+		description string
+		ppu         float32
+		qty 		int
+		total       float32
+		sender_id   int
+	}
+	type collection struct{
+		s sender
+		r receipient
+		inv invoice
+		items []items
+	}
+
 	http.HandleFunc("/generate", func(w http.ResponseWriter, r *http.Request) {
-
 
 		r.ParseForm()
 
-		for key,value := range r.Form{
-			fmt.Printf("%s = %s\n", key,value)
-		}
-	
+		var rec receipient
+		// var ite items
+		// var ds collection
+		var err error
+		
+		rec.receipient_name = r.FormValue("receiver_Name")
+		rec.address = r.FormValue("receiver_address")
+		rec.phone = r.FormValue("receiver_number")
+		_, err = fmt.Sscan(r.Form.Get("preset"), &rec.sender_id)
+		if err != nil {
+			panic(err)
+		} 
 
-		switch r.Method{
+			fmt.Println(reflect.TypeOf(r.Form["preset"][0]))
+		// //Storing items.
+		// a := make([]items,0)
+		// len := len(r.form[descriptions])
+
+		// for i := 0; i < len; i++ {
+		// 	fmt.Scan(r.form[descriptions][i], r.form[quantities][i], r.form[prices][i], &ite.description, &ite.qty, &ite.ppu)
+		// 	a = append(a,ite)
+		// }
+
+		// ds.items = a;
+
+
+
+
+		for key, value := range r.Form {
+			fmt.Printf("%s = %s\n", key, value)
+
+		}
+
+		switch r.Method {
 		case "POST":
-				renderTemplate(w, "printout.html", nil)
+			renderTemplate(w, "printout.html", nil)
 		default:
 			http.Error(w, "404 not found", http.StatusInternalServerError)
 		}
-	
+
+
 	})
 
 	//Sets up port for listening
