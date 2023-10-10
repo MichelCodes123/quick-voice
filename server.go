@@ -7,7 +7,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"reflect"
 	_ "strings"
 
 	"os"
@@ -20,7 +19,7 @@ import (
 var templates = template.Must(template.ParseGlob("templates/*.html"))
 
 func renderTemplate(w http.ResponseWriter, dir string, data any) {
-	err := templates.ExecuteTemplate(w, dir, nil)
+	err := templates.ExecuteTemplate(w, dir, data)
 	//Handling errors associated with ParseFiles method
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -112,43 +111,40 @@ func main() {
 		initt(w)
 	})
 
-
 	//Struct definitions to match the database
 	type sender struct {
-		receipient_name string
-		address         string
-		phone           string
-		email 			string
-		sender_id       int
+		Sender_name string
+		Address     string
+		Phone       string
+		Email       string
+		Sender_id   int
 	}
 	type receipient struct {
-		receipient_name string
-		address         string
-		phone           string
-		sender_id       int
+		Receipient_name string
+		Address         string
+		Phone           string
 	}
 
 	type invoice struct {
-		invoice_date string
-		subtotal     float32
-		tax          float32
-		shipping     float32
-		invoice_num  string
-		sender_id    int
+		Invoice_date string
+		Subtotal     float32
+		Tax          float32
+		Shipping     float32
+		Total        float32
 	}
 	type items struct {
-		invoice_num string
-		description string
-		ppu         float32
-		qty 		int
-		total       float32
-		sender_id   int
+		Description string
+		Ppu         float32
+		Qty         int
+		Total       float32
 	}
-	type collection struct{
-		s sender
-		r receipient
-		inv invoice
-		items []items
+	type collection struct {
+		S     sender
+		R     receipient
+		Inv   invoice
+		Items []items
+		Pre   int
+		Invn  string
 	}
 
 	http.HandleFunc("/generate", func(w http.ResponseWriter, r *http.Request) {
@@ -156,45 +152,84 @@ func main() {
 		r.ParseForm()
 
 		var rec receipient
-		// var ite items
-		// var ds collection
+		var inv invoice
+		inv.Subtotal = 0
+		var ite items
+		var sen sender
+		var ds collection
+
 		var err error
-		
-		rec.receipient_name = r.FormValue("receiver_Name")
-		rec.address = r.FormValue("receiver_address")
-		rec.phone = r.FormValue("receiver_number")
-		_, err = fmt.Sscan(r.Form.Get("preset"), &rec.sender_id)
+		var pre int
+		var invn string
+
+		//Storing receipient information
+		rec.Receipient_name = r.FormValue("receiver_Name")
+		rec.Address = r.FormValue("receiver_address")
+		rec.Phone = r.FormValue("receiver_number")
+		_, err = fmt.Sscan(r.Form.Get("preset"), &pre)
 		if err != nil {
 			panic(err)
-		} 
-
-			fmt.Println(reflect.TypeOf(r.Form["preset"][0]))
-		// //Storing items.
-		// a := make([]items,0)
-		// len := len(r.form[descriptions])
-
-		// for i := 0; i < len; i++ {
-		// 	fmt.Scan(r.form[descriptions][i], r.form[quantities][i], r.form[prices][i], &ite.description, &ite.qty, &ite.ppu)
-		// 	a = append(a,ite)
-		// }
-
-		// ds.items = a;
-
-
-
-
-		for key, value := range r.Form {
-			fmt.Printf("%s = %s\n", key, value)
-
 		}
+		_, err = fmt.Sscan(r.Form.Get("invoice_num"), &invn)
+		if err != nil {
+			panic(err)
+		}
+
+		//Storing the invoice items in the struct
+		a := make([]items, 0)
+		lent := len(r.Form["desc"])
+
+		for i := 0; i < lent; i++ {
+			ite.Description = r.Form["desc"][i]
+
+			_, err = fmt.Sscan(r.Form["qty"][i], &ite.Qty)
+			if err != nil {
+				http.Error(w, err.Error(), 406)
+			}
+			_, err = fmt.Sscan(r.Form["cpu"][i], &ite.Ppu)
+
+			if err != nil {
+				http.Error(w, err.Error(), 406)
+			}
+			ite.Total = float32(ite.Qty) * ite.Ppu
+			inv.Subtotal = inv.Subtotal + ite.Total
+			a = append(a, ite)
+		}
+
+		//Storing invoice informtion
+		inv.Invoice_date = r.FormValue("invoice_date")
+		_, err = fmt.Sscan(r.Form.Get("tax"), &inv.Tax)
+		if err != nil {
+			panic(err)
+		}
+		_, err = fmt.Sscan(r.Form.Get("shipping"), &inv.Shipping)
+		if err != nil {
+			panic(err)
+		}
+		inv.Invoice_date = r.FormValue("invoice_date")
+		inv.Total = inv.Subtotal*inv.Tax + inv.Shipping
+
+		//Storing sender information
+		sen.Sender_name = r.FormValue("sender_name")
+		sen.Address = r.FormValue("sender_address")
+		sen.Email = r.FormValue("sender_email")
+		sen.Phone = r.FormValue("sender_number")
+		sen.Sender_id = pre
+
+		//Storing collection to send back to templating
+		ds.S = sen
+		ds.Items = a
+		ds.R = rec
+		ds.Inv = inv
+		ds.Pre = pre
+		ds.Invn = invn
 
 		switch r.Method {
 		case "POST":
-			renderTemplate(w, "printout.html", nil)
+			renderTemplate(w, "printout.html", ds)
 		default:
 			http.Error(w, "404 not found", http.StatusInternalServerError)
 		}
-
 
 	})
 

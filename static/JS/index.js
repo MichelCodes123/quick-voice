@@ -87,18 +87,22 @@ function loadHandler() {
             let boolarr = [null, false, false, false, false, false]
             x.forEach(val => {
                 boolarr[val.id] = true;
-                const preset = filledPreset.cloneNode(true);
+                const preset = emptyPreset.cloneNode(true);
                 presetSection.appendChild(preset);
                 presetSection.querySelector(`.po-${val.id}`).innerText = val.name
 
-                preset.querySelector(".p-name").innerText = val.name
-                preset.querySelector(".p-addr").innerText = val.address
-                preset.querySelector(".p-mail").innerText = val.email
-                preset.querySelector(".p-num").innerText = val.number
+                preset.querySelector(".send-name").value = val.name
+                preset.querySelector(".send-addr").value = val.address
+                preset.querySelector(".send-mail").value = val.email
+                preset.querySelector(".send-num").value = val.number
                 preset.classList.add(`p${val.id}`)
                 preset.classList.add(`preset`)
+                preset.querySelectorAll(".field").forEach(x =>{
+                    x.readOnly = true;
+                })
             })
 
+            
             for (let i = 1; i <= 5; i++) {
                 if (boolarr[i] === false) {
                     const preset = emptyPreset.cloneNode(true);

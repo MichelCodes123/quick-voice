@@ -80,10 +80,10 @@
                     <fieldset id="general-info">
                         <label for="general-invoice-num">
                             <input id="general-invoice-num general" class="field special-input" type="text"
-                                placeholder="Invoice #" required>
+                                placeholder="Invoice #" name="invoice_num" required>
                         </label>
                         <label for="general-date">
-                            <input class="special-input" id="receive-addr" class="field" type="date" placeholder="Date of Invoice" required>
+                            <input class="special-input" id="receive-addr" class="field" type="date" placeholder="Date of Invoice" name="invoice_date" required>
                         </label>
 
                     </fieldset>
@@ -117,7 +117,7 @@
                 <h2 class="section-title">Item Summary:</h2>
 
                 <label for="summary-currency">
-                    <input class="field special-input" type="text" placeholder="Input Currency" name="tax">
+                    <input class="field special-input" type="text" placeholder="Input Currency" name="currency">
                 </label>
                 <table id="summary-table">
 
