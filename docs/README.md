@@ -6,8 +6,11 @@ Sleek and powerful invoicing application that lets users create and store busine
 
 ## Core Features
 Quick voice supports the following :
+- Quick and easy invoice creation tools
 - Support for up to 5 different businesses/ sender profiles
 - Invoice summary per preset
+
+Soon to be Added: 
 - Useful data analytics such as..
     - Average invoice total 
     - Average number of items invoiced
