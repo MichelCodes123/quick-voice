@@ -32,3 +32,4 @@ My database is setup as followed:
 3. Clone this repository.
 
 4. In the project directory, run `go run .` from the terminal
+ 

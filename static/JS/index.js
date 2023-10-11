@@ -97,12 +97,12 @@ function loadHandler() {
                 preset.querySelector(".send-num").value = val.number
                 preset.classList.add(`p${val.id}`)
                 preset.classList.add(`preset`)
-                preset.querySelectorAll(".field").forEach(x =>{
+                preset.querySelectorAll(".field").forEach(x => {
                     x.readOnly = true;
                 })
             })
 
-            
+
             for (let i = 1; i <= 5; i++) {
                 if (boolarr[i] === false) {
                     const preset = emptyPreset.cloneNode(true);
@@ -119,5 +119,51 @@ function loadHandler() {
             })
 
         })
+
+}
+
+
+
+//Handling Editing of Sender Profiles
+
+const editBtn = document.getElementById("edit-btn")
+const saveBtn = document.getElementById("save-btn")
+
+//Whenever button is edited
+editBtn.addEventListener("click", e => {
+    e.preventDefault()
+
+    //Find the preset currently showing
+    var curr = presetSelect.value;
+    fieldset = document.querySelector(`.p${curr}`);
+
+
+    //Capture all the fields within that preset
+    fieldset.querySelectorAll(".field").forEach(x => {
+        x.classList.remove("noedit")
+    })
+
+    //If it is a preset that is already stored, name should not be allowed to be edited!
+    if (!fieldset.classList.contains("no-preset")){
+        fieldset.querySelector(".send-name").add("noedit")
+    }
+    saveBtn.classList.remove("hide-btn")
+})
+
+saveBtn.addEventListener("click", e => {
+    e.preventDefault()
+    removeEdit()
+})
+
+function RemoveEdit(){
+    var curr = presetSelect.value;
+    fieldset = document.querySelector(`.p${curr}`);
+
+
+    //Capture all the fields within that preset
+    fieldset.querySelectorAll(".field").forEach(x => {
+        x.classList.add("noedit")
+    })
+    saveBtn.classList.add("hide-btn")
 
 }

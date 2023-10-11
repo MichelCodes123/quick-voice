@@ -194,3 +194,31 @@ input[type="number"] {
     width: 30%;
     height: 5rem;
 }
+
+
+.ctr-btn{
+    width: 8rem;
+    height: 3rem;
+    background-color: rgb(110, 110, 158);
+    color: white;
+    border: none;
+    
+}
+.ctr-btn:hover{
+    cursor: pointer;
+    color: black;
+    background-color: white;
+    border: solid rgb(110, 110, 158);
+    transition: 0.2s ease
+
+}
+
+.hide-btn{
+    display: none;
+}
+
+.noedit{
+    pointer-events: none;    
+    border: solid rgb(127, 127, 127);
+
+}

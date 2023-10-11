@@ -15,6 +15,80 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Struct definitions to match the database
+type sender struct {
+	Sender_name string
+	Address     string
+	Phone       string
+	Email       string
+	Sender_id   int
+}
+type receipient struct {
+	Receipient_name string
+	Address         string
+	Phone           string
+}
+
+type invoice struct {
+	Invoice_date string
+	Subtotal     float32
+	Tax          float32
+	Shipping     float32
+	Total        float32
+}
+type items struct {
+	Description string
+	Ppu         float32
+	Qty         int
+	Total       float32
+}
+type collection struct {
+	S     sender
+	R     receipient
+	Inv   invoice
+	Items []items
+	Pre   int
+	Invn  string
+}
+
+func toDb(clr collection, w http.ResponseWriter) {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading file")
+	}
+
+	connStr := os.Getenv("DATABASE_URL")
+	db, err := sql.Open("postgres", connStr)
+
+	if err != nil {
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+	}
+
+	var inserr error
+
+	// invoice_string := fmt.Sprintf("INSERT INTO invoice VALUES(%d, %s, %s, %f, %f,%f,%f)", clr.Pre, clr.Invn, clr.Inv.Invoice_date, clr.Inv.Total, clr.Inv.Subtotal, clr.Inv.Tax, clr.Inv.Shipping)
+	_, inserr = db.Exec("INSERT INTO invoice VALUES($1, $2, $3, $4, $5, $6, $7);", clr.Pre, clr.Invn, clr.Inv.Invoice_date, clr.Inv.Total, clr.Inv.Subtotal, clr.Inv.Tax, clr.Inv.Shipping)
+
+	if inserr != nil {
+		http.Error(w, inserr.Error(), http.StatusInternalServerError)
+	}
+	_, inserr = db.Exec("INSERT INTO recipient VALUES($1, $2, $3, $4);", clr.R.Receipient_name, clr.R.Address, clr.R.Phone, clr.Pre)
+	if inserr != nil {
+		http.Error(w, inserr.Error(), http.StatusInternalServerError)
+	}
+
+	for _, item := range clr.Items {
+		_, inserr = db.Exec("INSERT INTO items VALUES($1, $2, $3, $4, $5, $6);", clr.Pre, clr.Invn, item.Description, item.Qty, item.Ppu, item.Total)
+	}
+	if inserr != nil {
+		http.Error(w, inserr.Error(), http.StatusInternalServerError)
+	}
+
+	defer db.Close()
+
+}
+
 // var templates = template.Must(template.ParseFiles("templates/index.html", "templates/analytics.html"))
 var templates = template.Must(template.ParseGlob("templates/*.html"))
 
@@ -111,42 +185,6 @@ func main() {
 		initt(w)
 	})
 
-	//Struct definitions to match the database
-	type sender struct {
-		Sender_name string
-		Address     string
-		Phone       string
-		Email       string
-		Sender_id   int
-	}
-	type receipient struct {
-		Receipient_name string
-		Address         string
-		Phone           string
-	}
-
-	type invoice struct {
-		Invoice_date string
-		Subtotal     float32
-		Tax          float32
-		Shipping     float32
-		Total        float32
-	}
-	type items struct {
-		Description string
-		Ppu         float32
-		Qty         int
-		Total       float32
-	}
-	type collection struct {
-		S     sender
-		R     receipient
-		Inv   invoice
-		Items []items
-		Pre   int
-		Invn  string
-	}
-
 	http.HandleFunc("/generate", func(w http.ResponseWriter, r *http.Request) {
 
 		r.ParseForm()
@@ -223,6 +261,8 @@ func main() {
 		ds.Inv = inv
 		ds.Pre = pre
 		ds.Invn = invn
+
+		toDb(ds, w)
 
 		switch r.Method {
 		case "POST":

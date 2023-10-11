@@ -33,30 +33,40 @@
         <form id="invoice" method="POST" action="/generate" enctype="application/x-www-form-urlencoded">
             <section id="id-sect">
                 <div class="id-presets">
-                    <label for="id-presets-list">
 
-                        <select name="preset" id="id-presets-list">
-                            <option class="po-1" value="1">Preset 1</option>
-                            <option class="po-2" value="2">Preset 2</option>
-                            <option class="po-3" value="3">Preset 3</option>
-                            <option class="po-4" value="4">Preset 4</option>
-                            <option class="po-5" value="5">Preset 5</option>
-                        </select>
-                    </label>
+                    <div>
+                        <label for="id-presets-list">
+
+                            <select name="preset" id="id-presets-list">
+                                <option class="po-1" value="1">Preset 1</option>
+                                <option class="po-2" value="2">Preset 2</option>
+                                <option class="po-3" value="3">Preset 3</option>
+                                <option class="po-4" value="4">Preset 4</option>
+                                <option class="po-5" value="5">Preset 5</option>
+                            </select>
+                        </label>
+                        <button id="edit-btn" class="ctr-btn">Edit</button>
+                        <button id="save-btn" class="ctr-btn hide-btn">Save</button>
+                    </div>
+
 
                     <div class="no-preset hide-preset">
                         <fieldset class="main-id">
                             <label for="send-name">
-                                <input class="send-name field special-input" name="sender_name" type="text" placeholder="Sender Name" required disabled>
+                                <input class="send-name field special-input noedit" name="sender_name" type="text"
+                                    placeholder="Sender Name" required disabled>
                             </label>
                             <label for="send-addr">
-                                <input class="send-addr field special-input" name="sender_address" type="text" placeholder="Sender Address" required disabled>
+                                <input class="send-addr field special-input noedit" name="sender_address" type="text"
+                                    placeholder="Sender Address" required disabled>
                             </label>
                             <label for="send-num">
-                                <input class=" send-num field special-input" name = "sender_number" type="text" placeholder="Receiver Phone" required disabled>
+                                <input class=" send-num field special-input noedit" name="sender_number" type="text"
+                                    placeholder="Receiver Phone" required disabled>
                             </label>
                             <label for="send-mail">
-                                <input class="send-mail field special-input" name = "sender_email" type="email" placeholder="Sender Email" required disabled>
+                                <input class="send-mail field special-input noedit" name="sender_email" type="email"
+                                    placeholder="Sender Email" required disabled>
                             </label>
                             <!-- <label for="send-bill">
                                 <textarea class="send-bill field special-input" rows="3" placeholder="Billing Info"
@@ -83,7 +93,8 @@
                                 placeholder="Invoice #" name="invoice_num" required>
                         </label>
                         <label for="general-date">
-                            <input class="special-input" id="receive-addr" class="field" type="date" placeholder="Date of Invoice" name="invoice_date" required>
+                            <input class="special-input" id="receive-addr" class="field" type="date"
+                                placeholder="Date of Invoice" name="invoice_date" required>
                         </label>
 
                     </fieldset>
@@ -96,16 +107,16 @@
                 <h2>Billed To:</h2>
                 <fieldset class="main-id">
                     <label for="receive-name">
-                        <input id="receive-name special-input" name="receiver_Name" class="field special-input" type="text"
-                            placeholder="Receiver Name" required>
+                        <input id="receive-name special-input" name="receiver_Name" class="field special-input"
+                            type="text" placeholder="Receiver Name" required>
                     </label>
                     <label for="receive-addr">
-                        <input id="receive-addr" name="receiver_address" class="field special-input" type="text" placeholder="Receiver Address"
-                            required>
+                        <input id="receive-addr" name="receiver_address" class="field special-input" type="text"
+                            placeholder="Receiver Address" required>
                     </label>
                     <label for="receive-num">
-                        <input id="receive-num receive" name="receiver_number" class="field special-input" type="tel" required
-                            placeholder="Receiver Phone">
+                        <input id="receive-num receive" name="receiver_number" class="field special-input" type="tel"
+                            required placeholder="Receiver Phone">
                     </label>
                 </fieldset>
             </section>
@@ -164,7 +175,8 @@
                         </label>
                         <label for="">
                             Tax:
-                            <input id="summary-tax" class="special-input" type="number" value="0.00" step="any" name="tax">
+                            <input id="summary-tax" class="special-input" type="number" value="0.00" step="any"
+                                name="tax">
                         </label>
                         <label for="">
                             Shipping:
@@ -178,7 +190,7 @@
 
             </section>
 
-            <textarea id="extra-notes" name = "extra_notes" placeholder="Additional Information"></textarea>
+            <textarea id="extra-notes" name="extra_notes" placeholder="Additional Information"></textarea>
 
             <!-- Include field to change the colour of the background -->
 
