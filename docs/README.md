@@ -2,7 +2,8 @@
 Sleek and powerful invoicing application that lets users create and store business invoices. 
 
 **Current UI**
-![Alt text](image.png)
+![Alt text](image-2.png)
+![Alt text](image-3.png)
 
 ## Core Features
 Quick voice supports the following :
@@ -33,3 +34,6 @@ My database is setup as followed:
 
 4. In the project directory, run `go run .` from the terminal
  
+
+ ## Why isnt this app online?
+The focus of this project was learning golang and how to utilize databases. Putting the project online would require extra work setting up how to handle multiple/concurrent users in the same database. This was out of scope of the project. For now, it serves as a useful tool that anybody can run for themselves to store their own invoices.

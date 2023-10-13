@@ -204,6 +204,8 @@ function saveInfo() {
 
 }
 
+
+//Need some error handling for empty fields
 DelBtn.addEventListener("click", e => {
 
     e.preventDefault();
