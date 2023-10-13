@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", loadHandler)
 
 function loadHandler() {
 
-    fetch("\presets")
+    fetch("/presets")
         .then(response => {
             return response.json()
         })
@@ -97,9 +97,7 @@ function loadHandler() {
                 preset.querySelector(".send-num").value = val.number
                 preset.classList.add(`p${val.id}`)
                 preset.classList.add(`preset`)
-                preset.querySelectorAll(".field").forEach(x => {
-                    x.readOnly = true;
-                })
+
             })
 
 
@@ -128,6 +126,8 @@ function loadHandler() {
 
 const editBtn = document.getElementById("edit-btn")
 const saveBtn = document.getElementById("save-btn")
+const DelBtn = document.getElementById("del-btn")
+
 
 //Whenever button is edited
 editBtn.addEventListener("click", e => {
@@ -135,6 +135,7 @@ editBtn.addEventListener("click", e => {
 
     //Find the preset currently showing
     var curr = presetSelect.value;
+    presetSelect.disabled = true;
     fieldset = document.querySelector(`.p${curr}`);
 
 
@@ -144,26 +145,85 @@ editBtn.addEventListener("click", e => {
     })
 
     //If it is a preset that is already stored, name should not be allowed to be edited!
-    if (!fieldset.classList.contains("no-preset")){
+    if (!fieldset.classList.contains("no-preset")) {
         fieldset.querySelector(".send-name").add("noedit")
     }
     saveBtn.classList.remove("hide-btn")
+    DelBtn.classList.add("grey-btn")
 })
+
 
 saveBtn.addEventListener("click", e => {
     e.preventDefault()
     removeEdit()
+    saveInfo()
 })
 
-function RemoveEdit(){
+
+function removeEdit() {
     var curr = presetSelect.value;
     fieldset = document.querySelector(`.p${curr}`);
-
-
+    presetSelect.disabled = false;
+    // document.querySelector(`.p${curr}`).classList.remove("no-preset")
     //Capture all the fields within that preset
     fieldset.querySelectorAll(".field").forEach(x => {
         x.classList.add("noedit")
     })
     saveBtn.classList.add("hide-btn")
+    DelBtn.classList.remove("grey-btn")
+
 
 }
+
+function saveInfo() {
+
+    senderData = {
+        name: document.querySelector(`.p${presetSelect.value}`).querySelector(".send-name").value,
+        address: document.querySelector(`.p${presetSelect.value}`).querySelector(".send-addr").value,
+        number: document.querySelector(`.p${presetSelect.value}`).querySelector(".send-num").value,
+        email: document.querySelector(`.p${presetSelect.value}`).querySelector(".send-mail").value,
+        id: presetSelect.value
+    }
+
+
+
+
+    presetSelect.querySelector(`.po-${presetSelect.value}`).innerText = senderData.name
+
+
+    console.log(JSON.stringify(senderData))
+
+
+    fetch("/sdrUpdate", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(senderData)
+    })
+
+}
+
+DelBtn.addEventListener("click", e => {
+
+    e.preventDefault();
+
+    fetch("/deletePreset", {
+        method: 'DELETE',
+        headers: {
+            "Content-Type": "text/plain"
+        },
+        body: presetSelect.value
+    })
+        .then(
+
+
+            document.querySelector(`.p${presetSelect.value}`).querySelectorAll(".field").forEach(x => {
+                x.value = ""
+            })
+        )
+
+
+    presetSelect.querySelector(`.po-${presetSelect.value}`).innerText = `Preset ${presetSelect.value}`
+
+})

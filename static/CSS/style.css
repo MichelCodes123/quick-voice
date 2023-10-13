@@ -207,18 +207,31 @@ input[type="number"] {
 .ctr-btn:hover{
     cursor: pointer;
     color: black;
-    background-color: white;
-    border: solid rgb(110, 110, 158);
+    background-color: white !important;
+    border: solid rgb(0, 0, 0);
     transition: 0.2s ease
 
 }
 
 .hide-btn{
-    display: none;
+    display: none ;
+    transition: 0.5s ease;
+}
+
+.grey-btn{
+    background-color: grey !important;
+    pointer-events: none !important;
 }
 
 .noedit{
     pointer-events: none;    
     border: solid rgb(127, 127, 127);
 
+}
+
+#del-btn{
+    background-color: rgb(100, 21, 21);
+    margin-top: 0.5rem;
+    display: block;
+    
 }

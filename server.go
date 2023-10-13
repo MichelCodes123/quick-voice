@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"net/http"
+	_ "reflect"
 	_ "strings"
 
 	"os"
@@ -14,6 +16,50 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
+
+func updateSenderProfiles(s sdr, w http.ResponseWriter) {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading file")
+	}
+
+	connStr := os.Getenv("DATABASE_URL")
+	db, err := sql.Open("postgres", connStr)
+
+	if err != nil {
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+	}
+
+	_, inserr := db.Exec("INSERT into sender VALUES($1,$2,$3, $4, $5) ON CONFLICT (sender_id) DO UPDATE SET address = EXCLUDED.address, phone = EXCLUDED.phone, sender_name = EXCLUDED.sender_name, email = EXCLUDED.email;", s.Address, s.Number, s.Email, s.Name, s.Id)
+
+	if inserr != nil {
+		panic(inserr)
+	}
+	defer db.Close()
+}
+
+func deletePreset(preset string, w http.ResponseWriter) {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading file")
+	}
+
+	connStr := os.Getenv("DATABASE_URL")
+	db, err := sql.Open("postgres", connStr)
+
+	if err != nil {
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+	}
+
+	_, delerr := db.Exec("DELETE FROM sender WHERE sender_id=$1", preset)
+
+	if delerr != nil {
+		panic(delerr)
+	}
+
+}
 
 // Struct definitions to match the database
 type sender struct {
@@ -78,6 +124,7 @@ func toDb(clr collection, w http.ResponseWriter) {
 		http.Error(w, inserr.Error(), http.StatusInternalServerError)
 	}
 
+	//Optimize this, but doing one insert statement
 	for _, item := range clr.Items {
 		_, inserr = db.Exec("INSERT INTO items VALUES($1, $2, $3, $4, $5, $6);", clr.Pre, clr.Invn, item.Description, item.Qty, item.Ppu, item.Total)
 	}
@@ -102,11 +149,11 @@ func renderTemplate(w http.ResponseWriter, dir string, data any) {
 }
 
 type sdr struct {
-	Id      string `json:"id"`
 	Address string `json:"address"`
 	Number  string `json:"number"`
 	Email   string `json:"email"`
 	Name    string `json:"name"`
+	Id      string `json:"id"`
 }
 
 func initt(w http.ResponseWriter) {
@@ -133,7 +180,7 @@ func initt(w http.ResponseWriter) {
 	a := make([]sdr, 0)
 
 	for rows.Next() {
-		read_err := rows.Scan(&data.Id, &data.Address, &data.Number, &data.Email, &data.Name)
+		read_err := rows.Scan(&data.Address, &data.Number, &data.Email, &data.Name, &data.Id)
 		//Error handling for issue with database reads
 		if read_err != nil {
 			http.Error(w, "Something went wrong", http.StatusInternalServerError)
@@ -273,7 +320,36 @@ func main() {
 
 	})
 
+	//make sure this route only accepts get requests
+	http.HandleFunc("/sdrUpdate", func(w http.ResponseWriter, r *http.Request) {
+
+		var data sdr
+		d := json.NewDecoder(r.Body)
+		d.DisallowUnknownFields()
+
+		err := d.Decode(&data)
+
+		if err != nil {
+			panic(err)
+		}
+		updateSenderProfiles(data, w)
+	})
+
+	http.HandleFunc("/deletePreset", func(w http.ResponseWriter, r *http.Request) {
+
+		presetData, err := io.ReadAll(r.Body)
+		if err != nil {
+			panic(err)
+		}
+
+		preset := string(presetData)
+		fmt.Print(preset)
+		deletePreset(preset, w)
+
+	})
+
 	//Sets up port for listening
+
 	fmt.Println("Server Started")
 	log.Fatal(http.ListenAndServe("127.0.0.1:3000", nil))
 }
