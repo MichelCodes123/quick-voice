@@ -17,6 +17,11 @@ nav{
     justify-content: space-between;
     background-color: rgb(157, 157, 238);
 }
+@media print{
+    nav{
+        visibility: hidden;
+    }
+}
 table{
     border-collapse: collapse;
 }
@@ -209,13 +214,13 @@ input[type="number"] {
     color: black;
     background-color: white !important;
     border: solid rgb(0, 0, 0);
-    transition: 0.2s ease
+    
 
 }
 
 .hide-btn{
-    display: none ;
-    transition: 0.5s ease;
+    visibility: hidden;
+    
 }
 
 .grey-btn{
@@ -231,7 +236,15 @@ input[type="number"] {
 
 #del-btn{
     background-color: rgb(100, 21, 21);
-    margin-top: 0.5rem;
+
     display: block;
     
+}
+
+#btn-holder{
+    display: grid;
+    row-gap: 0.5rem;
+    column-gap: 0.5rem;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
 }

@@ -89,26 +89,29 @@ type items struct {
 	Total       float32
 }
 type collection struct {
-	S     sender
-	R     receipient
-	Inv   invoice
-	Items []items
-	Pre   int
-	Invn  string
+	S        sender
+	R        receipient
+	Inv      invoice
+	Items    []items
+	Pre      int
+	Invn     string
+	Notes    string
+	Currency string
 }
 
-func toDb(clr collection, w http.ResponseWriter) {
+func toDb(clr collection, w http.ResponseWriter) error {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading file")
+
+		return err
 	}
 
 	connStr := os.Getenv("DATABASE_URL")
 	db, err := sql.Open("postgres", connStr)
 
 	if err != nil {
-		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return err
 	}
 
 	var inserr error
@@ -117,22 +120,24 @@ func toDb(clr collection, w http.ResponseWriter) {
 	_, inserr = db.Exec("INSERT INTO invoice VALUES($1, $2, $3, $4, $5, $6, $7);", clr.Pre, clr.Invn, clr.Inv.Invoice_date, clr.Inv.Total, clr.Inv.Subtotal, clr.Inv.Tax, clr.Inv.Shipping)
 
 	if inserr != nil {
-		http.Error(w, inserr.Error(), http.StatusInternalServerError)
+		return inserr
 	}
 	_, inserr = db.Exec("INSERT INTO recipient VALUES($1, $2, $3, $4);", clr.R.Receipient_name, clr.R.Address, clr.R.Phone, clr.Pre)
 	if inserr != nil {
-		http.Error(w, inserr.Error(), http.StatusInternalServerError)
+		return inserr
 	}
 
 	//Optimize this, but doing one insert statement
 	for _, item := range clr.Items {
 		_, inserr = db.Exec("INSERT INTO items VALUES($1, $2, $3, $4, $5, $6);", clr.Pre, clr.Invn, item.Description, item.Qty, item.Ppu, item.Total)
-	}
-	if inserr != nil {
-		http.Error(w, inserr.Error(), http.StatusInternalServerError)
+		if inserr != nil {
+			return inserr
+		}
 	}
 
 	defer db.Close()
+
+	return nil
 
 }
 
@@ -277,6 +282,7 @@ func main() {
 				http.Error(w, err.Error(), 406)
 			}
 			ite.Total = float32(ite.Qty) * ite.Ppu
+			
 			inv.Subtotal = inv.Subtotal + ite.Total
 			a = append(a, ite)
 		}
@@ -292,7 +298,7 @@ func main() {
 			panic(err)
 		}
 		inv.Invoice_date = r.FormValue("invoice_date")
-		inv.Total = inv.Subtotal*inv.Tax + inv.Shipping
+		inv.Total = (inv.Subtotal * inv.Tax) + inv.Subtotal + inv.Shipping
 
 		//Storing sender information
 		sen.Sender_name = r.FormValue("sender_name")
@@ -308,15 +314,26 @@ func main() {
 		ds.Inv = inv
 		ds.Pre = pre
 		ds.Invn = invn
+		ds.Notes = r.Form.Get("extra_notes")
+		ds.Currency = r.Form.Get("currency")
 
-		toDb(ds, w)
+		//Issue, refreshing the page resubmits the form. Submitting the same data causes the database to raise the constaint key error. Simply capturing the error, but database is still opened in the process
+		errs := toDb(ds, w)
+
+		//Consider using fetch request to mitigate having to open the database unecessarily.. Optimize
+		fmt.Print(errs)
 
 		switch r.Method {
 		case "POST":
 			renderTemplate(w, "printout.html", ds)
+
 		default:
 			http.Error(w, "404 not found", http.StatusInternalServerError)
 		}
+
+	})
+
+	http.HandleFunc("/printout", func(w http.ResponseWriter, r *http.Request) {
 
 	})
 
@@ -346,6 +363,11 @@ func main() {
 		fmt.Print(preset)
 		deletePreset(preset, w)
 
+	})
+	http.HandleFunc("/history", func(w http.ResponseWriter, r *http.Request) {
+
+
+		renderTemplate(w, "history.html", nil)
 	})
 
 	//Sets up port for listening

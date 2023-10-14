@@ -127,6 +127,7 @@ function loadHandler() {
 const editBtn = document.getElementById("edit-btn")
 const saveBtn = document.getElementById("save-btn")
 const DelBtn = document.getElementById("del-btn")
+const CancelBtn = document.getElementById("cancel-btn")
 
 
 //Whenever button is edited
@@ -149,6 +150,7 @@ editBtn.addEventListener("click", e => {
         fieldset.querySelector(".send-name").add("noedit")
     }
     saveBtn.classList.remove("hide-btn")
+    CancelBtn.classList.remove("hide-btn")
     DelBtn.classList.add("grey-btn")
 })
 
@@ -170,6 +172,7 @@ function removeEdit() {
         x.classList.add("noedit")
     })
     saveBtn.classList.add("hide-btn")
+    CancelBtn.classList.add("hide-btn")
     DelBtn.classList.remove("grey-btn")
 
 
@@ -228,4 +231,10 @@ DelBtn.addEventListener("click", e => {
 
     presetSelect.querySelector(`.po-${presetSelect.value}`).innerText = `Preset ${presetSelect.value}`
 
+})
+
+CancelBtn.addEventListener("click", e => {
+
+    e.preventDefault()
+    removeEdit()
 })

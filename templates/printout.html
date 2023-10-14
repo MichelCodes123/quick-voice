@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" type="text/css" href="static/CSS/style.css?v=2">
+    <link rel="stylesheet" type="text/css" href="static/CSS/printout.css?v=2">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
@@ -22,27 +22,37 @@
 
 <body>
 
-    <main class="main-wrapper">
-        <form id="invoice" method="POST" action="/generate" enctype="application/x-www-form-urlencoded">
-            <section id="id-sect">
-                <div class="preset-ready ">
-                    <h1 class="p-name"> {{.S.Sender_name}}</h1>
-                    <p class="p-addr"> {{.S.Address}}</p>
-                    <p class="p-num"> {{.S.Phone}}</p>
-                    <p class="p-mail"> {{.S.Email}}</p>
+    <nav>
+        <h1 class="main-title"> Quick-Voice</h1>
+        <ul class="nav-links-wrap">
+            <li> <a class="nav-links" href="">Home</a></li>
+            <li> <a class="nav-links" href="/history">Invoice History</a></li>
+            <li> <a class="nav-links" href="">Analytics</a></li>
+        </ul>
+    </nav>
 
+    <main class="main-wrapper">
+        <div id="invoice">
+            <section id="id-sect">
+
+                <div>
+                    <h1 class="p-name"> {{.S.Sender_name}}</h1>
+                    <div class="text">
+                        <p class="p-addr"> {{.S.Address}}</p>
+                        <p class="p-num"> {{.S.Phone}}</p>
+                        <p class="p-mail"> {{.S.Email}}</p>
+
+                    </div>
                 </div>
-                </div>
+
 
                 <div>
                     <h2> Invoice</h2>
-                    <fieldset id="general-info">
-
-                        <p class="p-addr"> Invoice Number: {{.Invn}}</p>
+                    <div class="text">
+                        <p class=" p-addr"> Invoice Number: {{.Invn}}</p>
                         <p class="p-num"> Invoice Date: {{.Inv.Invoice_date}}</p>
 
-
-                    </fieldset>
+                    </div>
                 </div>
 
 
@@ -50,11 +60,11 @@
 
             <section>
                 <h2>Billed To:</h2>
-                <fieldset class="main-id">
+                <div class="text">
                     <p class="p-addr"> {{.R.Receipient_name}}</p>
                     <p class="p-num"> {{.R.Address}}</p>
                     <p class="p-mail"> {{.R.Phone}}</p>
-                </fieldset>
+                </div>
             </section>
 
 
@@ -74,8 +84,8 @@
                         <tr>
                             <th>Item Description</th>
                             <th>Quantity</th>
-                            <th>Cost/Unit</th>
-                            <th>Total</th>
+                            <th>Cost/Unit ({{.Currency}})</th>
+                            <th>Total ({{.Currency}})</th>
                         </tr>
 
                         {{range .Items}}
@@ -85,13 +95,13 @@
                                 <p> {{.Description}}</p>
                             </td>
                             <td>
-                                <p> {{.Qty}}</p>
+                                <p class="summary-data-item"> {{.Qty}}</p>
                             </td>
                             <td>
-                                <p> {{.Ppu}} </p>
+                                <p class="summary-data-item"> {{.Ppu}} </p>
                             </td>
                             <td>
-                                <p> {{.Total}} </p>
+                                <p class="summary-data-item"> {{.Total}} </p>
                             </td>
                         </tr>
                         {{end}}
@@ -107,16 +117,16 @@
 
                     <div id="summary-extra">
                         <p>
-                            Subtotal: {{.Inv.Subtotal}}
+                            Subtotal: {{.Currency}}{{.Inv.Subtotal}}
                         </p>
                         <p>
                             Tax: {{.Inv.Tax}}
                         </p>
                         <p>
-                            Shipping: {{.Inv.Shipping}}
+                            Shipping: {{.Currency}}{{.Inv.Shipping}}
                         </p>
 
-                        <h3 id="summary-total">Total: {{.Inv.Total}}</h3>
+                        <h3 id="summary-total">Total: {{.Currency}}{{.Inv.Total}}</h3>
 
                     </div>
 
@@ -125,22 +135,20 @@
             </section>
 
             <p>
-                Additional Notes: 
+                Additional Notes: {{.Notes}}
             </p>
 
             <!-- Include field to change the colour of the background -->
 
-         
 
-        </form>
+
+        </div>
 
 
 
 
     </main>
 
-
-    <script src="static/JS/index.js"></script>
 </body>
 
 </html>
