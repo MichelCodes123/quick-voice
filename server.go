@@ -333,7 +333,7 @@ func main() {
 
 	})
 
-	http.HandleFunc("/printout", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/loadhistory", func(w http.ResponseWriter, r *http.Request) {
 
 	})
 
