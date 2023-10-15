@@ -64,7 +64,7 @@ nav{
 }
 .invoice-card{
     position: relative;
-    width: 50%;
+
     height: 14rem;
     background-color: rgb(110, 110, 158);
     color: white;
@@ -91,7 +91,7 @@ nav{
     display: flex;
    justify-content: space-around;
    align-items: center;
-    gap: 5rem;
+    gap: 2rem
  
 }
 .data-wrap{
@@ -104,7 +104,6 @@ nav{
     flex-direction: column;
     gap: 0.2rem;
     justify-self: center;
-    align-self: center;
 }
 .invoice-card-btn{
     width: 8rem;
@@ -153,3 +152,18 @@ nav{
     right: 0;
 }
 
+
+.hide-card{
+    display: none !important;
+}
+
+.gr{
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
+}
+
+.invn{
+    width: 10ch;
+}

@@ -25,7 +25,7 @@
     <nav>
         <h1 class="main-title"> Quick-Voice</h1>
         <ul class="nav-links-wrap">
-            <li> <a class="nav-links" href="">Home</a></li>
+            <li> <a class="nav-links" href="/">Home</a></li>
             <li> <a class="nav-links" href="/history">Invoice History</a></li>
             <li> <a class="nav-links" href="">Analytics</a></li>
         </ul>
@@ -101,7 +101,7 @@
                                 <p class="summary-data-item"> {{.Ppu}} </p>
                             </td>
                             <td>
-                                <p class="summary-data-item"> {{.Total}} </p>
+                                <p class="summary-data-item"> {{ printf "%.2f" .Total}} </p>
                             </td>
                         </tr>
                         {{end}}
@@ -117,16 +117,16 @@
 
                     <div id="summary-extra">
                         <p>
-                            Subtotal: {{.Currency}}{{.Inv.Subtotal}}
+                            Subtotal: {{.Currency}}{{printf "%.2f" .Inv.Subtotal}}
                         </p>
                         <p>
                             Tax: {{.Inv.Tax}}
                         </p>
                         <p>
-                            Shipping: {{.Currency}}{{.Inv.Shipping}}
+                            Shipping: {{.Currency}}{{printf "%.2f" .Inv.Shipping}}
                         </p>
 
-                        <h3 id="summary-total">Total: {{.Currency}}{{.Inv.Total}}</h3>
+                        <h3 id="summary-total">Total: {{.Currency}}{{printf "%.2f" .Inv.Total}}</h3>
 
                     </div>
 

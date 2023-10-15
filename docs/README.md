@@ -37,3 +37,4 @@ My database is setup as followed:
 
  ## Why isnt this app online?
 The focus of this project was learning golang and how to utilize databases. Putting the project online would require extra work setting up how to handle multiple/concurrent users in the same database. This was out of scope of the project. For now, it serves as a useful tool that anybody can run for themselves to store their own invoices.
+

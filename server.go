@@ -31,7 +31,7 @@ func updateSenderProfiles(s sdr, w http.ResponseWriter) {
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 	}
 
-	_, inserr := db.Exec("INSERT into sender VALUES($1,$2,$3, $4, $5) ON CONFLICT (sender_id) DO UPDATE SET address = EXCLUDED.address, phone = EXCLUDED.phone, sender_name = EXCLUDED.sender_name, email = EXCLUDED.email;", s.Address, s.Number, s.Email, s.Name, s.Id)
+	_, inserr := db.Exec("INSERT into sender VALUES($1,$2,$3,$4,$5) ON CONFLICT (sender_id) DO UPDATE SET sender_address = EXCLUDED.sender_address, sender_phone = EXCLUDED.sender_phone,  sender_email = EXCLUDED.sender_email, sender_name = EXCLUDED.sender_name, sender_id = EXCLUDED.sender_id; ", s.Address, s.Number, s.Email, s.Name, s.Id)
 
 	if inserr != nil {
 		panic(inserr)
@@ -98,6 +98,17 @@ type collection struct {
 	Notes    string
 	Currency string
 }
+type pcollection struct {
+	Sender_name string
+	Sender_id   int
+	info        []data
+}
+type data struct {
+	Invoice_date string     `json:"invoice_date"`
+	R            receipient `json:"receipient"`
+	Invn         string     `json:"invn"`
+	Total        float32    `json:"total"`
+}
 
 func toDb(clr collection, w http.ResponseWriter) error {
 
@@ -117,19 +128,21 @@ func toDb(clr collection, w http.ResponseWriter) error {
 	var inserr error
 
 	// invoice_string := fmt.Sprintf("INSERT INTO invoice VALUES(%d, %s, %s, %f, %f,%f,%f)", clr.Pre, clr.Invn, clr.Inv.Invoice_date, clr.Inv.Total, clr.Inv.Subtotal, clr.Inv.Tax, clr.Inv.Shipping)
-	_, inserr = db.Exec("INSERT INTO invoice VALUES($1, $2, $3, $4, $5, $6, $7);", clr.Pre, clr.Invn, clr.Inv.Invoice_date, clr.Inv.Total, clr.Inv.Subtotal, clr.Inv.Tax, clr.Inv.Shipping)
+
+	fmt.Print("Here")
+	_, inserr = db.Exec("INSERT INTO invoice VALUES($1, $2, $3, $4, $5, $6, $7);", clr.Inv.Invoice_date, clr.Inv.Total, clr.Inv.Subtotal, clr.Inv.Tax, clr.Inv.Shipping, clr.Pre, clr.Invn)
 
 	if inserr != nil {
 		return inserr
 	}
-	_, inserr = db.Exec("INSERT INTO recipient VALUES($1, $2, $3, $4);", clr.R.Receipient_name, clr.R.Address, clr.R.Phone, clr.Pre)
+	_, inserr = db.Exec("INSERT INTO recipient VALUES($1, $2, $3, $4, $5);", clr.R.Receipient_name, clr.R.Address, clr.R.Phone, clr.Pre, clr.Invn)
 	if inserr != nil {
 		return inserr
 	}
 
 	//Optimize this, but doing one insert statement
 	for _, item := range clr.Items {
-		_, inserr = db.Exec("INSERT INTO items VALUES($1, $2, $3, $4, $5, $6);", clr.Pre, clr.Invn, item.Description, item.Qty, item.Ppu, item.Total)
+		_, inserr = db.Exec("INSERT INTO items VALUES($1, $2, $3, $4, $5, $6);", item.Description, item.Qty, item.Ppu, item.Total, clr.Pre, clr.Invn)
 		if inserr != nil {
 			return inserr
 		}
@@ -159,6 +172,10 @@ type sdr struct {
 	Email   string `json:"email"`
 	Name    string `json:"name"`
 	Id      string `json:"id"`
+}
+type q struct {
+	Name string
+	Id   int
 }
 
 func initt(w http.ResponseWriter) {
@@ -281,8 +298,9 @@ func main() {
 			if err != nil {
 				http.Error(w, err.Error(), 406)
 			}
+
 			ite.Total = float32(ite.Qty) * ite.Ppu
-			
+
 			inv.Subtotal = inv.Subtotal + ite.Total
 			a = append(a, ite)
 		}
@@ -334,6 +352,61 @@ func main() {
 	})
 
 	http.HandleFunc("/loadhistory", func(w http.ResponseWriter, r *http.Request) {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading file")
+		}
+
+		connStr := os.Getenv("DATABASE_URL")
+		db, err := sql.Open("postgres", connStr)
+
+		if err != nil {
+			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		}
+
+		defer db.Close()
+
+		presetData, err := io.ReadAll(r.Body)
+		if err != nil {
+			panic(err)
+		}
+		preset := string(presetData)
+
+		b := make([]data, 0)
+		var c data
+
+		//Join based on the invoice number and the sender id to retrieve all invoices (and recipients) associated with a sender.
+		rows, err := db.Query(`SELECT invoice.invoice_num, invoice_date, invoice_total, recipient_name, recipient_address, recipient_phone FROM invoice JOIN recipient on invoice.invoice_num = recipient.invoice_num AND invoice.sender_id = recipient.sender_id AND invoice.sender_id = $1;`, preset)
+
+		//This will store all invoices and recipient data in an array of structs. Each array instance is an invoice.
+		for rows.Next() {
+			read_err := rows.Scan(&c.Invn, &c.Invoice_date, &c.Total, &c.R.Receipient_name, &c.R.Address, &c.R.Phone)
+			//Error handling for issue with database reads
+			if read_err != nil {
+				http.Error(w, "Something went wrong", http.StatusInternalServerError)
+			}
+
+			defer rows.Close()
+			b = append(b, c)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		str, re := json.Marshal(b)
+
+		if re != nil {
+			fmt.Print(re)
+		}
+		//Setup response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, writerr := w.Write(str)
+
+		//Error handling for issues with writing the response
+		if writerr != nil {
+			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		}
 
 	})
 
@@ -360,14 +433,47 @@ func main() {
 		}
 
 		preset := string(presetData)
-		fmt.Print(preset)
 		deletePreset(preset, w)
 
 	})
 	http.HandleFunc("/history", func(w http.ResponseWriter, r *http.Request) {
 
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading file")
+		}
 
-		renderTemplate(w, "history.html", nil)
+		connStr := os.Getenv("DATABASE_URL")
+		db, err := sql.Open("postgres", connStr)
+
+		if err != nil {
+			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		}
+
+		defer db.Close()
+
+		//Retrieve all senders from the database with simple query
+		rows, e := db.Query(`SELECT sender_name, sender_id FROM sender`)
+		if e != nil {
+			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		}
+
+		a := make([]q, 0)
+		var d q
+
+		for rows.Next() {
+			//Only store the name and id/preset
+			read_err := rows.Scan(&d.Name, &d.Id)
+			//Error handling for issue with database reads
+			if read_err != nil {
+				http.Error(w, "Something went wrong", http.StatusInternalServerError)
+			}
+			defer rows.Close()
+			a = append(a, d)
+
+		}
+
+		renderTemplate(w, "history.html", a)
 	})
 
 	//Sets up port for listening
@@ -375,3 +481,91 @@ func main() {
 	fmt.Println("Server Started")
 	log.Fatal(http.ListenAndServe("127.0.0.1:3000", nil))
 }
+
+// http.HandleFunc("/archive", func(w http.ResponseWriter, r *http.Request) {
+// 	err := godotenv.Load()
+// 	if err != nil {
+// 		log.Fatal("Error loading file")
+// 	}
+
+// 	connStr := os.Getenv("DATABASE_URL")
+// 	db, err := sql.Open("postgres", connStr)
+
+// 	if err != nil {
+// 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+// 	}
+
+// 	defer db.Close()
+
+// 	//Retrieve all senders from the database with simple query
+// 	rows, e := db.Query(`SELECT sender_name, sender_id FROM sender`)
+// 	if e != nil {
+// 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+// 	}
+
+// 	var name string
+// 	var id int
+// 	//Create a "slice" with the make function, to form a growable array of sender structs
+
+// 	//Create a slice of partial collections. Each partial collection represents the information needed for a specific sender profile (to be displayed on the summary cards)
+// 	a := make([]pcollection, 0)
+
+// 	//For each row in the sender tables
+// 	for rows.Next() {
+// 		//Only store the name and id/preset
+// 		read_err := rows.Scan(&name, &id)
+// 		//Error handling for issue with database reads
+// 		if read_err != nil {
+// 			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+// 		}
+// 		defer rows.Close()
+
+// 		//Append a new partial collection for each sender
+// 		a = append(a, pcollection{name, id, nil})
+// 	}
+
+// 	b := make([]data, 0)
+// 	var c data
+
+// 	//Loop through partial collections
+// 	for i := 0; i < len(a); i++ {
+
+// 		//Join based on the invoice number and the sender id to retrieve all invoices (and recipients) associated with a sender.
+// 		rows, err := db.Query(`SELECT invoice.invoice_num, invoice_date, invoice_total, recipient_name, recipient_address, recipient_phone FROM invoice JOIN recipient on invoice.invoice_num = recipient.invoice_num AND invoice.sender_id = recipient.sender_id AND invoice.sender_id = $1;`, a[i].Sender_id)
+
+// 		//This will store all invoices and recipient data in an array of structs. Each array instance is an invoice.
+// 		for rows.Next() {
+// 			read_err := rows.Scan(&c.Invn, &c.Invoice_date, &c.total, &c.receipient.Receipient_name, &c.receipient.Address, &c.receipient.Phone)
+// 			//Error handling for issue with database reads
+// 			if read_err != nil {
+// 				http.Error(w, "Something went wrong", http.StatusInternalServerError)
+// 			}
+
+// 			defer rows.Close()
+// 			b = append(b, c)
+
+// 		}
+
+// 		//Store all invoices in each partial collection. A.K.A, store every invoice for every user.
+// 		a[i].info = b
+// 		if err != nil {
+// 			panic(err)
+// 		}
+// 	}
+
+// 	str, re := json.Marshal(a[0].info)
+// 	if re != nil {
+// 		fmt.Print(re)
+// 	}
+
+// 	//Setup response
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.WriteHeader(http.StatusOK)
+// 	_, writerr := w.Write(str)
+
+// 	//Error handling for issues with writing the response
+// 	if writerr != nil {
+// 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+// 	}
+
+// })
