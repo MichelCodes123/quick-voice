@@ -2,8 +2,8 @@
 Sleek and powerful invoicing application that lets users create and store business invoices. 
 
 **Current UI**
-![Alt text](image-2.png)
-![Alt text](image-3.png)
+![Alt text](image-4.png)
+![Alt text](image-5.png)
 
 ## Core Features
 Quick voice supports the following :
@@ -29,6 +29,7 @@ My database is setup as followed:
 
 2. Install PostgresSQL and setup a local database
 > https://www.postgresql.org/download/
+> Run the sql file to setup the database schema
 
 3. Clone this repository.
 
