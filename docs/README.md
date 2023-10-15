@@ -22,7 +22,7 @@ I had been looking to learn SQL and how to use a DBMS, so I thought a project wo
 
 ## Database Schema
 My database is setup as followed: 
-![Alt text](image-1.png)
+![Alt text](image.png)
 ## How to run the project.
 1. Install Go
 > https://go.dev/dl/
