@@ -30,7 +30,7 @@
         </ul>
     </nav>
     <main class="main-wrapper">
-        <form id="invoice" method="POST" action="/generate" enctype="application/x-www-form-urlencoded">
+        <form id="invoice" method="POST" action="/generate" enctype="application/x-www-form-urlencoded" autocomplete="off">
             <section id="id-sect">
                 <div class="id-presets">
 
@@ -118,7 +118,7 @@
                             placeholder="Receiver Address" required>
                     </label>
                     <label for="receive-num">
-                        <input id="receive-num receive" name="receiver_number" class="field special-input" type="tel"
+                        <input id="receive-num receive" name="receiver_number" class="field special-input" type="tel" autocomplete="off" aria-autocomplete="none"
                             required placeholder="Receiver Phone">
                     </label>
                 </fieldset>
