@@ -2,6 +2,11 @@
 Sleek and powerful invoicing application that lets users create and store business invoices. 
 
 ## Demo
+![View Demo](DemoQuickVoice.mp4)
+
+**Current UI**
+![Alt text](image-4.png)
+![Alt text](image-5.png)
 
 ## Core Features
 Quick voice supports the following :
