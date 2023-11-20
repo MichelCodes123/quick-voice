@@ -283,6 +283,7 @@ func main() {
 		}
 
 		//Storing the invoice items in the struct
+		//Make slice of strucss. Each item in r.Form["desc"] belongs to a separate item struct
 		a := make([]items, 0)
 		lent := len(r.Form["desc"])
 
